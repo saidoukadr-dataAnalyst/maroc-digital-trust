@@ -1,0 +1,51 @@
+# .gitignore — Maroc Digital Trust Gateway
+
+# ── Fichiers sensibles (CRITIQUE) ──
+*.pem
+*.p12
+*.p12.enc
+*.enc
+*.salt
+.env
+.env.*
+security_vault/
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# ── Build ──
+build/
+dist/
+*.spec
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ──
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# ── Docker ──
+docker-compose.override.yml
+
+# ── Tests ──
+.pytest_cache/
+htmlcov/
+.coverage
+
+# ── Logs ──
+*.log

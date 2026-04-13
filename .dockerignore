@@ -1,0 +1,22 @@
+# .dockerignore — Maroc Digital Trust Gateway
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.venv/
+venv/
+build/
+dist/
+*.spec
+*.pem
+*.p12
+*.enc
+*.salt
+.env
+.env.*
+*.log
+security_vault/
+node_modules/
+.pytest_cache/
+.vscode/
+.idea/

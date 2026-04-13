@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maroc Digital Trust Gateway — Plateforme de Certification Souveraine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary:   #006233;
+      --accent:    #C1272D;
+      --gold:      #D4AF37;
+      --bg:        #030a12;
+      --surface:   rgba(255,255,255,0.04);
+      --border:    rgba(255,255,255,0.08);
+      --text:      #e8edf5;
+      --muted:     rgba(232,237,245,0.5);
+      --glow-g:    rgba(0,98,51,0.5);
+      --glow-r:    rgba(193,39,45,0.4);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Inter',sans-serif;
+      overflow-x:hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:#0a0f1a}
+    ::-webkit-scrollbar-thumb{background:var(--primary);border-radius:6px}
+
+    /* ── CANVAS HERO ── */
+    #hero-canvas{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      pointer-events:none;z-index:0;opacity:0.55;
+    }
+
+    /* ── NAV ── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      padding:16px 60px;
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(3,10,18,0.7);
+      backdrop-filter:blur(24px);
+      border-bottom:1px solid var(--border);
+      transition:all .3s;
+    }
+    .nav-logo{
+      display:flex;align-items:center;gap:12px;
+      font-weight:800;font-size:1.1rem;letter-spacing:.5px;
+    }
+    .nav-logo .flag{font-size:1.4rem}
+    .nav-logo span{
+      background:linear-gradient(135deg,var(--primary),#00a854);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .nav-links{display:flex;gap:32px;list-style:none}
+    .nav-links a{
+      color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;
+      transition:color .2s;letter-spacing:.3px;
+    }
+    .nav-links a:hover{color:var(--text)}
+    .nav-cta{
+      background:linear-gradient(135deg,var(--primary),#00a854);
+      color:#fff;border:none;padding:10px 24px;border-radius:8px;
+      font-weight:600;font-size:.9rem;cursor:pointer;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--glow-g)}
+
+    /* ── SECTIONS ── */
+    section{position:relative;z-index:1}
+
+    /* ── HERO ── */
+    #hero{
+      min-height:100vh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;
+      padding:120px 40px 80px;
+    }
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(0,98,51,0.15);
+      border:1px solid rgba(0,98,51,0.4);
+      border-radius:50px;padding:7px 18px;
+      font-size:.82rem;font-weight:600;letter-spacing:.8px;
+      color:#6ee08a;margin-bottom:32px;
+      animation:fadeInDown .8s ease both;
+    }
+    .hero-badge .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:#6ee08a;
+      box-shadow:0 0 8px #6ee08a;
+      animation:pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+
+    .hero-title{
+      font-size:clamp(2.8rem,6vw,5.5rem);
+      font-weight:900;line-height:1.08;
+      letter-spacing:-1.5px;
+      margin-bottom:12px;
+      animation:fadeInUp .9s ease .1s both;
+    }
+    .hero-title .line1{
+      background:linear-gradient(135deg,#fff 30%,rgba(255,255,255,.6));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .hero-title .line2{
+      background:linear-gradient(135deg,var(--primary),#00d463);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .hero-title .line3{
+      background:linear-gradient(135deg,var(--gold),#f5d97a);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .hero-sub{
+      max-width:680px;font-size:1.15rem;color:var(--muted);
+      line-height:1.7;margin:20px auto 44px;
+      animation:fadeInUp .9s ease .2s both;
+    }
+    .hero-btns{
+      display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+      animation:fadeInUp .9s ease .3s both;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--primary),#00a854);
+      color:#fff;border:none;padding:16px 38px;border-radius:12px;
+      font-weight:700;font-size:1rem;cursor:pointer;
+      box-shadow:0 0 32px var(--glow-g);
+      transition:transform .25s,box-shadow .25s;
+    }
+    .btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px var(--glow-g)}
+    .btn-secondary{
+      background:transparent;
+      border:1.5px solid rgba(255,255,255,0.2);
+      color:var(--text);padding:16px 38px;border-radius:12px;
+      font-weight:600;font-size:1rem;cursor:pointer;
+      backdrop-filter:blur(8px);
+      transition:border-color .25s,transform .25s,background .25s;
+    }
+    .btn-secondary:hover{
+      border-color:rgba(255,255,255,0.5);
+      background:rgba(255,255,255,0.05);
+      transform:translateY(-3px);
+    }
+
+    /* Shield decoration */
+    .hero-shield{
+      margin-top:64px;
+      position:relative;display:inline-block;
+      animation:fadeInUp 1s ease .4s both;
+    }
+    .shield-glow{
+      position:absolute;inset:-40px;
+      background:radial-gradient(circle,rgba(0,98,51,0.25) 0%,transparent 70%);
+      border-radius:50%;animation:glow-pulse 3s ease-in-out infinite;
+    }
+    @keyframes glow-pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.15);opacity:1}}
+    .shield-box{
+      position:relative;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(0,98,51,0.4);
+      border-radius:20px;padding:28px 50px;
+      backdrop-filter:blur(20px);
+    }
+    .shield-metrics{
+      display:flex;gap:50px;
+    }
+    .metric{text-align:center}
+    .metric-val{
+      font-size:2.4rem;font-weight:900;
+      background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .metric-val.green{background:linear-gradient(135deg,#6ee08a,#00a854);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .metric-val.gold{background:linear-gradient(135deg,var(--gold),#f5c842);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .metric-val.red{background:linear-gradient(135deg,#ff6b70,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .metric-label{font-size:.78rem;color:var(--muted);font-weight:500;letter-spacing:.5px;margin-top:4px}
+
+    /* ── SHARED ── */
+    .section-header{text-align:center;margin-bottom:64px}
+    .section-tag{
+      display:inline-block;
+      font-size:.75rem;font-weight:700;letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--primary);background:rgba(0,98,51,0.12);
+      border:1px solid rgba(0,98,51,0.3);
+      border-radius:50px;padding:5px 16px;margin-bottom:18px;
+    }
+    .section-title{
+      font-size:clamp(2rem,4vw,3.2rem);font-weight:800;
+      letter-spacing:-1px;line-height:1.15;margin-bottom:16px;
+    }
+    .section-desc{color:var(--muted);font-size:1.05rem;max-width:580px;margin:0 auto;line-height:1.7}
+
+    /* ── FEATURES ── */
+    #features{padding:120px 60px}
+    .features-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:24px;max-width:1200px;margin:0 auto;
+    }
+    .feature-card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:20px;padding:36px 32px;
+      position:relative;overflow:hidden;
+      transition:transform .35s cubic-bezier(.2,.8,.3,1),border-color .35s,box-shadow .35s;
+      cursor:default;
+    }
+    .feature-card::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 30% 20%,var(--card-glow,rgba(0,98,51,.08)),transparent 60%);
+      opacity:0;transition:opacity .35s;
+    }
+    .feature-card:hover::before{opacity:1}
+    .feature-card:hover{
+      transform:translateY(-8px) scale(1.01);
+      border-color:var(--card-border,rgba(0,98,51,.5));
+      box-shadow:0 24px 60px var(--card-shadow,rgba(0,98,51,.2));
+    }
+    .card-icon{
+      width:56px;height:56px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.6rem;margin-bottom:20px;
+      background:var(--card-icon-bg,rgba(0,98,51,.15));
+      border:1px solid var(--card-icon-border,rgba(0,98,51,.3));
+      transition:transform .35s;
+    }
+    .feature-card:hover .card-icon{transform:scale(1.1) rotate(-3deg)}
+    .card-title{font-size:1.15rem;font-weight:700;margin-bottom:10px}
+    .card-desc{color:var(--muted);font-size:.92rem;line-height:1.65}
+    .card-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+    .tag{
+      font-size:.72rem;font-weight:600;letter-spacing:.5px;
+      padding:4px 12px;border-radius:50px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      color:var(--muted);
+    }
+    .card-number{
+      position:absolute;top:24px;right:28px;
+      font-size:3.5rem;font-weight:900;
+      color:rgba(255,255,255,0.03);
+      font-family:'JetBrains Mono',monospace;
+      line-height:1;
+    }
+
+    /* card color schemes */
+    .c-green{--card-glow:rgba(0,98,51,.12);--card-border:rgba(0,166,80,.5);--card-shadow:rgba(0,98,51,.25);--card-icon-bg:rgba(0,166,80,.12);--card-icon-border:rgba(0,166,80,.3)}
+    .c-blue{--card-glow:rgba(52,152,219,.12);--card-border:rgba(52,152,219,.5);--card-shadow:rgba(52,152,219,.2);--card-icon-bg:rgba(52,152,219,.12);--card-icon-border:rgba(52,152,219,.3)}
+    .c-purple{--card-glow:rgba(142,68,173,.12);--card-border:rgba(142,68,173,.5);--card-shadow:rgba(142,68,173,.2);--card-icon-bg:rgba(142,68,173,.12);--card-icon-border:rgba(142,68,173,.3)}
+    .c-red{--card-glow:rgba(193,39,45,.12);--card-border:rgba(193,39,45,.5);--card-shadow:rgba(193,39,45,.2);--card-icon-bg:rgba(193,39,45,.12);--card-icon-border:rgba(193,39,45,.3)}
+    .c-gold{--card-glow:rgba(212,175,55,.12);--card-border:rgba(212,175,55,.5);--card-shadow:rgba(212,175,55,.25);--card-icon-bg:rgba(212,175,55,.12);--card-icon-border:rgba(212,175,55,.3)}
+    .c-teal{--card-glow:rgba(22,160,133,.12);--card-border:rgba(22,160,133,.5);--card-shadow:rgba(22,160,133,.2);--card-icon-bg:rgba(22,160,133,.12);--card-icon-border:rgba(22,160,133,.3)}
+
+    /* ── HOW IT WORKS (Timeline) ── */
+    #how{padding:120px 60px;background:linear-gradient(180deg,transparent,rgba(0,98,51,0.03),transparent)}
+    .timeline{max-width:900px;margin:0 auto;position:relative;padding:12px 0}
+    .timeline::before{
+      content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
+      background:linear-gradient(180deg,transparent,var(--primary),var(--gold),transparent);
+      transform:translateX(-50%);
+    }
+    .t-step{
+      display:flex;align-items:flex-start;gap:32px;
+      margin-bottom:64px;position:relative;
+    }
+    .t-step:nth-child(even){flex-direction:row-reverse}
+    .t-step:nth-child(even) .t-content{text-align:right}
+    .t-content{flex:1;padding:28px 32px;
+      background:var(--surface);border:1px solid var(--border);border-radius:16px;
+      backdrop-filter:blur(12px);
+      transition:transform .35s,border-color .35s,box-shadow .35s;
+    }
+    .t-content:hover{
+      transform:translateY(-4px);
+      border-color:rgba(0,98,51,.4);
+      box-shadow:0 16px 40px rgba(0,98,51,.15)
+    }
+    .t-node{
+      width:52px;height:52px;flex-shrink:0;
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.3rem;
+      background:linear-gradient(135deg,var(--primary),#00a854);
+      box-shadow:0 0 24px var(--glow-g);
+      position:relative;z-index:1;
+    }
+    .t-step-num{font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--primary);margin-bottom:6px;text-transform:uppercase}
+    .t-title{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+    .t-desc{color:var(--muted);font-size:.9rem;line-height:1.65}
+
+    /* ── STATS COUNTER ── */
+    #stats{padding:100px 60px}
+    .stats-grid{
+      max-width:1000px;margin:0 auto;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+    }
+    .stat-card{
+      text-align:center;padding:40px 20px;
+      background:var(--surface);border:1px solid var(--border);border-radius:20px;
+      transition:transform .35s,box-shadow .35s;
+    }
+    .stat-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,98,51,.15)}
+    .stat-icon{font-size:2rem;margin-bottom:16px;display:block}
+    .stat-number{
+      font-size:2.8rem;font-weight:900;
+      background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .stat-label{color:var(--muted);font-size:.85rem;font-weight:500;margin-top:6px;letter-spacing:.3px}
+
+    /* ── SECURITY LAYERS ── */
+    #layers{padding:120px 60px}
+    .layers-container{max-width:900px;margin:0 auto}
+    .layer{
+      display:flex;align-items:center;gap:24px;
+      padding:24px 32px;margin-bottom:16px;
+      background:var(--surface);border:1px solid var(--border);border-radius:14px;
+      transition:transform .3s,border-color .3s;
+      position:relative;overflow:hidden;
+    }
+    .layer::after{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+      background:var(--layer-color,var(--primary));border-radius:0 3px 3px 0;
+    }
+    .layer:hover{transform:translateX(6px);border-color:var(--layer-color,var(--primary))}
+    .layer-icon{font-size:1.5rem;width:44px;text-align:center;flex-shrink:0}
+    .layer-info{flex:1}
+    .layer-name{font-weight:700;font-size:.95rem;margin-bottom:4px}
+    .layer-desc{color:var(--muted);font-size:.85rem}
+    .layer-badge{
+      font-size:.72rem;font-weight:700;
+      padding:4px 14px;border-radius:50px;
+      background:rgba(0,98,51,.15);color:#6ee08a;
+      border:1px solid rgba(0,98,51,.3);
+      white-space:nowrap;
+    }
+
+    /* ── TECH STACK ── */
+    #tech{padding:100px 60px;background:linear-gradient(180deg,transparent,rgba(193,39,45,0.02),transparent)}
+    .tech-pills{
+      display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:800px;margin:0 auto;
+    }
+    .tech-pill{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 20px;border-radius:50px;
+      background:var(--surface);border:1px solid var(--border);
+      font-size:.88rem;font-weight:500;
+      transition:transform .25s,border-color .25s,box-shadow .25s;
+    }
+    .tech-pill:hover{
+      transform:translateY(-4px);
+      border-color:rgba(255,255,255,.25);
+      box-shadow:0 8px 24px rgba(0,0,0,.4);
+    }
+    .tech-pill .dot{width:8px;height:8px;border-radius:50%}
+
+    /* ── CTA ── */
+    #cta{
+      padding:120px 60px;text-align:center;
+      background:radial-gradient(ellipse at 50% 50%,rgba(0,98,51,0.12) 0%,transparent 70%);
+    }
+    .cta-box{
+      max-width:700px;margin:0 auto;
+      background:var(--surface);border:1px solid rgba(0,98,51,.3);
+      border-radius:28px;padding:70px 60px;
+      backdrop-filter:blur(20px);
+      box-shadow:0 0 80px rgba(0,98,51,.1),inset 0 0 40px rgba(0,98,51,.03);
+    }
+    .cta-eyebrow{
+      font-size:.8rem;letter-spacing:3px;text-transform:uppercase;
+      color:var(--primary);font-weight:600;margin-bottom:20px;
+    }
+    .cta-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;letter-spacing:-1px;margin-bottom:16px;line-height:1.2}
+    .cta-sub{color:var(--muted);font-size:1rem;line-height:1.7;margin-bottom:36px}
+    .cta-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+    /* ── FOOTER ── */
+    footer{
+      padding:40px 60px;
+      border-top:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:16px;
+    }
+    .footer-logo{font-weight:800;font-size:1rem;background:linear-gradient(135deg,var(--primary),#00a854);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .footer-copy{color:var(--muted);font-size:.82rem}
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .7s ease,transform .7s ease}
+    .reveal-left.visible{opacity:1;transform:translateX(0)}
+    .reveal-right{opacity:0;transform:translateX(40px);transition:opacity .7s ease,transform .7s ease}
+    .reveal-right.visible{opacity:1;transform:translateX(0)}
+
+    .stagger>*{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+    .stagger.visible>*{opacity:1;transform:translateY(0)}
+    .stagger.visible>*:nth-child(1){transition-delay:.05s}
+    .stagger.visible>*:nth-child(2){transition-delay:.12s}
+    .stagger.visible>*:nth-child(3){transition-delay:.19s}
+    .stagger.visible>*:nth-child(4){transition-delay:.26s}
+    .stagger.visible>*:nth-child(5){transition-delay:.33s}
+    .stagger.visible>*:nth-child(6){transition-delay:.40s}
+
+    /* ── TYPING CURSOR ── */
+    .typing::after{content:'|';animation:blink .7s step-end infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar{
+      height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;
+      margin-top:16px;
+    }
+    .progress-fill{
+      height:100%;border-radius:4px;
+      background:linear-gradient(90deg,var(--primary),#00d463);
+      width:0;transition:width 1.5s cubic-bezier(.4,0,.2,1) .5s;
+    }
+
+    /* Morocco flag line */
+    .flag-line{
+      width:100%;height:3px;
+      background:linear-gradient(90deg,
+        var(--accent) 0%,var(--accent) 50%,
+        var(--primary) 50%,var(--primary) 100%);
+    }
+
+    @media(max-width:768px){
+      nav{padding:14px 24px}
+      #features{padding:80px 20px}
+      #how{padding:80px 20px}
+      #stats{padding:60px 20px}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .timeline::before{left:26px}
+      .t-step,.t-step:nth-child(even){flex-direction:row;align-items:flex-start}
+      .t-step:nth-child(even) .t-content{text-align:left}
+      footer{flex-direction:column;text-align:center}
+    }
+  </style>
+</head>
+<body>
+
+<div class="flag-line"></div>
+<canvas id="hero-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <span class="flag">🇲🇦</span>
+    <span>MAROC DIGITAL TRUST</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#how">Processus</a></li>
+    <li><a href="#layers">Sécurité</a></li>
+    <li><a href="#tech">Technologie</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Lancer la Démo</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Présenté à la Cité de l'Innovation — Rabat 2026
+  </div>
+  <h1 class="hero-title">
+    <div class="line1">Certification Documentaire</div>
+    <div class="line2">Souveraine & Sécurisée</div>
+    <div class="line3">pour le Maroc Numérique</div>
+  </h1>
+  <p class="hero-sub">
+    Plateforme de signature cryptographique avancée combinant ECDSA, PAdES ISO, blockchain et intelligence artificielle pour garantir l'authenticité des documents officiels marocains.
+  </p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Découvrir les Fonctionnalités</button>
+    <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Comment ça fonctionne ?</button>
+  </div>
+  <div class="hero-shield reveal">
+    <div class="shield-glow"></div>
+    <div class="shield-box">
+      <div class="shield-metrics">
+        <div class="metric">
+          <div class="stat-number metric-val green" data-target="256">0</div>
+          <div class="metric-label">bits SHA-256</div>
+        </div>
+        <div class="metric">
+          <div class="stat-number metric-val gold" data-target="6">0</div>
+          <div class="metric-label">Couches Sécurité</div>
+        </div>
+        <div class="metric">
+          <div class="stat-number metric-val red" data-target="0">0</div>
+          <div class="metric-label">% Faux Positifs</div>
+        </div>
+        <div class="metric">
+          <div class="stat-number metric-val" data-target="100">0</div>
+          <div class="metric-label">% Souverain</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header reveal">
+    <div class="section-tag">Fonctionnalités</div>
+    <h2 class="section-title">6 Modules de Confiance Numérique</h2>
+    <p class="section-desc">Une architecture en couches conçue pour répondre aux exigences les plus strictes des institutions publiques et privées marocaines.</p>
+  </div>
+  <div class="features-grid stagger">
+
+    <div class="feature-card c-green">
+      <div class="card-number">01</div>
+      <div class="card-icon">⛓️</div>
+      <h3 class="card-title">Ancrage Blockchain</h3>
+      <p class="card-desc">Chaque hash de document est ancré de manière permanente et décentralisée sur la blockchain Ethereum (Sepolia Testnet). La preuve d'existence devient inaltérable et publiquement vérifiable.</p>
+      <div class="card-tags"><span class="tag">Ethereum</span><span class="tag">Web3.py</span><span class="tag">Décentralisé</span><span class="tag">SHA-256</span></div>
+    </div>
+
+    <div class="feature-card c-blue">
+      <div class="card-number">02</div>
+      <div class="card-icon">🔍</div>
+      <h3 class="card-title">OCR Intelligent</h3>
+      <p class="card-desc">Extraction automatique du texte et des champs clés (CIN, Montant, Date, Nom) par reconnaissance optique de caractères. Les métadonnées sont intégrées directement dans le QR Code de certification.</p>
+      <div class="card-tags"><span class="tag">Tesseract</span><span class="tag">pdfplumber</span><span class="tag">Regex</span><span class="tag">NLP</span></div>
+    </div>
+
+    <div class="feature-card c-purple">
+      <div class="card-number">03</div>
+      <div class="card-icon">📋</div>
+      <h3 class="card-title">Parapheur Électronique</h3>
+      <p class="card-desc">Workflow de signatures séquentiel multi-acteurs. Un directeur, un doyen, un ministre — chacun signe à son tour. Historique, statuts, approbation et rejet trackés en temps réel.</p>
+      <div class="card-tags"><span class="tag">Multi-signatures</span><span class="tag">PAdES incrémental</span><span class="tag">Workflow JSON</span></div>
+    </div>
+
+    <div class="feature-card c-red">
+      <div class="card-number">04</div>
+      <div class="card-icon">🚨</div>
+      <h3 class="card-title">Analyse DLP par IA</h3>
+      <p class="card-desc">Scanner intelligent de données sensibles avant toute signature. Détecte les IBAN, CIN, mots de passe en clair, et données médicales. Bloque automatiquement les fuites critiques.</p>
+      <div class="card-tags"><span class="tag">DLP</span><span class="tag">CRITICAL/WARNING</span><span class="tag">Loi 09-08</span><span class="tag">RGPD</span></div>
+    </div>
+
+    <div class="feature-card c-gold">
+      <div class="card-number">05</div>
+      <div class="card-icon">🏛️</div>
+      <h3 class="card-title">Tampon Visuel Officiel</h3>
+      <p class="card-desc">Remplacement du QR Code brut par un sceau officiel circulaire composite (Pillow). Texte en arc, nom du signataire, date, et QR Code cryptographique intégré au centre du tampon.</p>
+      <div class="card-tags"><span class="tag">Pillow/PIL</span><span class="tag">Arc Text</span><span class="tag">Configurable</span></div>
+    </div>
+
+    <div class="feature-card c-teal">
+      <div class="card-number">06</div>
+      <div class="card-icon">🔐</div>
+      <h3 class="card-title">Authentification 2FA / TOTP</h3>
+      <p class="card-desc">Double facteur d'authentification compatible Google Authenticator et Authy. Code TOTP obligatoire avant chaque signature critique. Provisionnement par QR Code de configuration.</p>
+      <div class="card-tags"><span class="tag">TOTP RFC 6238</span><span class="tag">pyotp</span><span class="tag">Google Auth</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-header reveal">
+    <div class="section-tag">Processus</div>
+    <h2 class="section-title">De la Création à la Vérification</h2>
+    <p class="section-desc">Un processus en 5 étapes cryptographiquement sécurisé, de bout en bout.</p>
+  </div>
+  <div class="timeline">
+    <div class="t-step reveal-left">
+      <div class="t-content">
+        <div class="t-step-num">Étape 01</div>
+        <h3 class="t-title">🔐 Authentification & 2FA</h3>
+        <p class="t-desc">Le signataire se connecte avec ses identifiants chiffrés (SHA-256 + PBKDF2). Si le 2FA est activé, un code TOTP à 6 chiffres est requis via Google Authenticator.</p>
+        <div class="progress-bar"><div class="progress-fill" style="--target-width:100%"></div></div>
+      </div>
+      <div class="t-node">🔐</div>
+      <div style="flex:1"></div>
+    </div>
+    <div class="t-step reveal-right">
+      <div style="flex:1"></div>
+      <div class="t-node">🔍</div>
+      <div class="t-content">
+        <div class="t-step-num">Étape 02</div>
+        <h3 class="t-title">🔍 OCR & Scan DLP</h3>
+        <p class="t-desc">Le document est analysé par OCR pour extraire les métadonnées clés. Le moteur DLP scanne ensuite le contenu pour détecter toute donnée sensible avant de procéder.</p>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+    </div>
+    <div class="t-step reveal-left">
+      <div class="t-content">
+        <div class="t-step-num">Étape 03</div>
+        <h3 class="t-title">✍️ Double Certification</h3>
+        <p class="t-desc">Hachage SHA-256 du document original. Signature ECDSA (SECP256R1) avec la clé privée chiffrée. Génération du tampon visuel officiel. Application de la signature PAdES (ISO 32000-2).</p>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+      <div class="t-node">✍️</div>
+      <div style="flex:1"></div>
+    </div>
+    <div class="t-step reveal-right">
+      <div style="flex:1"></div>
+      <div class="t-node">⛓️</div>
+      <div class="t-content">
+        <div class="t-step-num">Étape 04</div>
+        <h3 class="t-title">⛓️ Ancrage Blockchain</h3>
+        <p class="t-desc">Le hash du document est envoyé sur la blockchain Ethereum et enregistré dans le registre local. La preuve d'existence est désormais permanente et décentralisée.</p>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+    </div>
+    <div class="t-step reveal-left">
+      <div class="t-content">
+        <div class="t-step-num">Étape 05</div>
+        <h3 class="t-title">✅ Vérification & Audit</h3>
+        <p class="t-desc">N'importe qui peut vérifier l'authenticité du document en important le PDF. L'application extrait le QR Code, décode la signature ECDSA, et confirme l'intégrité en millisecondes.</p>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+      <div class="t-node">✅</div>
+      <div style="flex:1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="section-header reveal">
+    <div class="section-tag">Chiffres Clés</div>
+    <h2 class="section-title">La Confiance en Chiffres</h2>
+  </div>
+  <div class="stats-grid stagger">
+    <div class="stat-card">
+      <span class="stat-icon">🔒</span>
+      <div class="stat-number" data-target="256">0</div>
+      <div class="stat-label">bits de chiffrement SHA-256</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⚡</span>
+      <div class="stat-number" data-target="3" data-suffix="s">0</div>
+      <div class="stat-label">Temps de certification moyen</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🛡️</span>
+      <div class="stat-number" data-target="7">0</div>
+      <div class="stat-label">Couches de protection</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🌍</span>
+      <div class="stat-number" data-target="100" data-suffix="%">0</div>
+      <div class="stat-label">Souverain & Open Source</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY LAYERS -->
+<section id="layers">
+  <div class="section-header reveal">
+    <div class="section-tag">Architecture de Sécurité</div>
+    <h2 class="section-title">7 Couches de Protection</h2>
+    <p class="section-desc">Une défense en profondeur (Defense-in-Depth) inspirée des standards militaires et bancaires internationaux.</p>
+  </div>
+  <div class="layers-container stagger">
+    <div class="layer" style="--layer-color:#6ee08a">
+      <span class="layer-icon">🔑</span>
+      <div class="layer-info">
+        <div class="layer-name">Authentification Multi-facteurs (2FA TOTP)</div>
+        <div class="layer-desc">Identifiants SHA-256 + code temporaire TOTP RFC 6238 — compatible Google Authenticator</div>
+      </div>
+      <span class="layer-badge">RFC 6238</span>
+    </div>
+    <div class="layer" style="--layer-color:#3498db">
+      <span class="layer-icon">🔐</span>
+      <div class="layer-info">
+        <div class="layer-name">Chiffrement Asymétrique ECDSA</div>
+        <div class="layer-desc">Clé privée SECP256R1 chiffrée avec BestAvailableEncryption (AES-256-GCM) protégée par mot de passe PBKDF2</div>
+      </div>
+      <span class="layer-badge">SECP256R1</span>
+    </div>
+    <div class="layer" style="--layer-color:#e67e22">
+      <span class="layer-icon">🕵️</span>
+      <div class="layer-info">
+        <div class="layer-name">Scan DLP — Prévention des Fuites</div>
+        <div class="layer-desc">Détection par regex des CIN, IBAN, clés API, mots de passe et données médicales avant chaque certification</div>
+      </div>
+      <span class="layer-badge">Loi 09-08</span>
+    </div>
+    <div class="layer" style="--layer-color:#9b59b6">
+      <span class="layer-icon">📜</span>
+      <div class="layer-info">
+        <div class="layer-name">Signature PAdES (ISO 32000-2)</div>
+        <div class="layer-desc">Signature numérique officielle reconnue par Adobe Acrobat, compatible eIDAS — vérifiable sans logiciel tiers</div>
+      </div>
+      <span class="layer-badge">ISO 32000-2</span>
+    </div>
+    <div class="layer" style="--layer-color:#D4AF37">
+      <span class="layer-icon">🏛️</span>
+      <div class="layer-info">
+        <div class="layer-name">Tampon QR Cryptographique Visuel</div>
+        <div class="layer-desc">Sceau circulaire composite encodant ID signataire + Hash SHA-256 + Signature ECDSA + Champs OCR</div>
+      </div>
+      <span class="layer-badge">Souverain</span>
+    </div>
+    <div class="layer" style="--layer-color:#16a085">
+      <span class="layer-icon">⛓️</span>
+      <div class="layer-info">
+        <div class="layer-name">Ancrage Blockchain Décentralisé</div>
+        <div class="layer-desc">Enregistrement immuable du hash sur Ethereum Testnet — preuve d'existence permanente et vérifiable publiquement</div>
+      </div>
+      <span class="layer-badge">Ethereum</span>
+    </div>
+    <div class="layer" style="--layer-color:#e74c3c">
+      <span class="layer-icon">📊</span>
+      <div class="layer-info">
+        <div class="layer-name">Journal d'Audit Complet</div>
+        <div class="layer-desc">Chaque action (login, signature, vérification, bypass DLP) est enregistrée avec horodatage dans audit.log</div>
+      </div>
+      <span class="layer-badge">Audit Trail</span>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="section-header reveal">
+    <div class="section-tag">Stack Technologique</div>
+    <h2 class="section-title">Construit avec les Meilleurs Outils</h2>
+  </div>
+  <div class="tech-pills reveal">
+    <div class="tech-pill"><span class="dot" style="background:#3776ab"></span>Python 3.13</div>
+    <div class="tech-pill"><span class="dot" style="background:#ff983f"></span>CustomTkinter</div>
+    <div class="tech-pill"><span class="dot" style="background:#e34f26"></span>PyMuPDF (fitz)</div>
+    <div class="tech-pill"><span class="dot" style="background:#009688"></span>pyHanko (PAdES)</div>
+    <div class="tech-pill"><span class="dot" style="background:#f7c737"></span>cryptography (ECDSA)</div>
+    <div class="tech-pill"><span class="dot" style="background:#6366f1"></span>pyotp (TOTP)</div>
+    <div class="tech-pill"><span class="dot" style="background:#10b981"></span>OpenCV (QR)</div>
+    <div class="tech-pill"><span class="dot" style="background:#06b6d4"></span>pdfplumber (OCR)</div>
+    <div class="tech-pill"><span class="dot" style="background:#f59e0b"></span>Pillow (Tampon)</div>
+    <div class="tech-pill"><span class="dot" style="background:#627eea"></span>Web3.py (Blockchain)</div>
+    <div class="tech-pill"><span class="dot" style="background:#ef4444"></span>qrcode</div>
+    <div class="tech-pill"><span class="dot" style="background:#8b5cf6"></span>PyInstaller</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-box reveal">
+    <div class="cta-eyebrow">Cité de l'Innovation de Rabat — 2026</div>
+    <h2 class="cta-title">Prêt à Certifier le Futur Numérique du Maroc ?</h2>
+    <p class="cta-sub">Maroc Digital Trust Gateway est une solution 100% souveraine, open-source et prête à être déployée dans les institutions publiques marocaines.</p>
+    <div class="cta-buttons">
+      <button class="btn-primary" onclick="alert('Lancement de l\'application...\n\nCommande : python app_unifiee.py\n\nLogin : admin / admin123')">🚀 Lancer la Démo</button>
+      <button class="btn-secondary">📄 Voir la Documentation</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🇲🇦 MAROC DIGITAL TRUST GATEWAY</div>
+  <div class="footer-copy">Développé pour la Cité de l'Innovation de Rabat — 2026</div>
+  <div class="footer-copy">Python · Cryptographie · Blockchain · IA</div>
+</footer>
+
+<script>
+// ── PARTICLE CANVAS ──
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], nodes = [];
+const resize = () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight; };
+resize(); window.addEventListener('resize', resize);
+
+const COLORS = ['rgba(0,166,80,', 'rgba(0,98,51,', 'rgba(52,152,219,', 'rgba(212,175,55,'];
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random()*W; this.y = Math.random()*H;
+    this.vx = (Math.random()-.5)*.5; this.vy = (Math.random()-.5)*.5;
+    this.r = Math.random()*2+.5;
+    this.color = COLORS[Math.floor(Math.random()*COLORS.length)];
+    this.alpha = Math.random()*.6+.1;
+    this.life = 0; this.maxLife = 300+Math.random()*200;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy; this.life++;
+    if(this.life>this.maxLife||this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle = this.color+this.alpha+')';
+    ctx.fill();
+  }
+}
+for(let i=0;i<90;i++) particles.push(new Particle());
+
+// Blockchain-like nodes
+for(let i=0;i<14;i++) nodes.push({
+  x:Math.random()*W, y:Math.random()*H,
+  vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+  r:3+Math.random()*4
+});
+
+let mouse = {x:W/2,y:H/2};
+window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+
+function drawConnections() {
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<200){
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
+        const alpha=(1-d/200)*.25;
+        ctx.strokeStyle=`rgba(0,166,80,${alpha})`;
+        ctx.lineWidth=.8; ctx.stroke();
+      }
+    }
+    // Mouse connection
+    const dx=nodes[i].x-mouse.x, dy=nodes[i].y-mouse.y;
+    const d=Math.sqrt(dx*dx+dy*dy);
+    if(d<180){
+      ctx.beginPath();
+      ctx.moveTo(nodes[i].x,nodes[i].y);
+      ctx.lineTo(mouse.x,mouse.y);
+      ctx.strokeStyle=`rgba(212,175,55,${(1-d/180)*.4})`;
+      ctx.lineWidth=1.2; ctx.stroke();
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p=>{p.update();p.draw();});
+  nodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0||n.x>W)n.vx*=-1;
+    if(n.y<0||n.y>H)n.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,166,80,0.7)';
+    ctx.shadowColor='rgba(0,200,100,0.8)';
+    ctx.shadowBlur=12;
+    ctx.fill();
+    ctx.shadowBlur=0;
+  });
+  drawConnections();
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      // Trigger progress bars inside
+      e.target.querySelectorAll('.progress-fill').forEach(bar=>{
+        const tw = bar.style.getPropertyValue('--target-width') || '85%';
+        setTimeout(()=>bar.style.width=tw,200);
+      });
+      // Trigger counters
+      e.target.querySelectorAll('[data-target]').forEach(el=>animateCounter(el));
+    }
+  });
+},{threshold:.12});
+
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.stagger').forEach(el=>observer.observe(el));
+
+// Progress bar default widths
+document.querySelectorAll('.t-step:nth-child(1) .progress-fill').forEach(b=>b.style.setProperty('--target-width','100%'));
+document.querySelectorAll('.t-step:nth-child(2) .progress-fill').forEach(b=>b.style.setProperty('--target-width','87%'));
+document.querySelectorAll('.t-step:nth-child(3) .progress-fill').forEach(b=>b.style.setProperty('--target-width','95%'));
+document.querySelectorAll('.t-step:nth-child(4) .progress-fill').forEach(b=>b.style.setProperty('--target-width','78%'));
+document.querySelectorAll('.t-step:nth-child(5) .progress-fill').forEach(b=>b.style.setProperty('--target-width','100%'));
+
+// ── COUNTER ANIMATION ──
+function animateCounter(el) {
+  if(el.dataset.animated) return;
+  el.dataset.animated = 'true';
+  const target = +el.dataset.target;
+  const suffix = el.dataset.suffix||'';
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now-start)/duration,1);
+    const ease = 1-Math.pow(1-t,4);
+    el.textContent = Math.floor(ease*target)+suffix;
+    if(t<1) requestAnimationFrame(step);
+    else el.textContent = target+suffix;
+  }
+  requestAnimationFrame(step);
+}
+// Run for hero stats on load
+setTimeout(()=>{
+  document.querySelectorAll('#hero [data-target]').forEach(el=>animateCounter(el));
+},500);
+
+// ── NAV SCROLL EFFECT ──
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  if(scrollY>60) nav.style.background='rgba(3,10,18,0.95)';
+  else nav.style.background='rgba(3,10,18,0.7)';
+});
+
+// ── TYPING EFFECT (hero title) ──
+// (handled by CSS animation for performance)
+</script>
+</body>
+</html>

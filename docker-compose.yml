@@ -1,0 +1,52 @@
+services:
+  # Base de données pour les messages asynchrones
+  redis:
+    image: redis:7-alpine
+    container_name: trust_gateway_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # API principale (FastAPI)
+  api:
+    build: .
+    container_name: trust_gateway_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - vault_data:/app/security_vault
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Worker Celery pour le traitement lourd (OCR, Signature, Blockchain)
+  worker:
+    build: .
+    container_name: trust_gateway_worker
+    command: celery -A api.celery_app.celery_app worker --loglevel=info --concurrency=2
+    volumes:
+      - vault_data:/app/security_vault
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  vault_data:
+    driver: local
